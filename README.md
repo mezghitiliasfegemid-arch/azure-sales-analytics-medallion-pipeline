@@ -1,11 +1,12 @@
 # Sales Analytics Dashboard – Azure
 > **Author:** MEZGHIT Ilias (Aspiring Data Analyst)
+
 ## Project Overview
 This project demonstrates an end-to-end **Sales Analytics Dashboard** built using **Azure Synapse Analytics**, **Azure Data Lake Storage (ADLS Gen2)**, and **Power BI**.  
 It follows the **Medallion architecture** (Bronze → Silver → Gold) to process and transform raw sales data into curated insights ready for business reporting.
 
-The **Gold layer** is modelled using a **Snowflake Schema** that includes one Fact table and six Dimension tables created through Synapse SQL scripts.  
-A connected **Power BI dashboard** visualizes sales, products, and customer performance insights.
+- **Silver Layer (Root Directory):** Contains cleaned, validated, and structured CSV datasets.
+- **Gold Layer (`/Gold` Directory):** Contains curated analytics-ready data modeled into a **Snowflake Schema** with Fact and Dimension tables created through Synapse SQL scripts.
 
 ---
 
@@ -22,22 +23,38 @@ A connected **Power BI dashboard** visualizes sales, products, and customer perf
 | Layer | Description |
 |--------|--------------|
 | **Bronze** | Raw ingested data from multiple sources |
-| **Silver** | Cleaned, validated, and structured data |
-| **Gold** | Curated analytics-ready data (Fact & Dimension tables) |
+| **Silver** | Cleaned, validated, and structured datasets (Root CSV files) |
+| **Gold** | Curated analytics-ready data located in `/Gold` (Fact & Dimension tables) |
 
 ---
 
-## Gold Layer Schema
+## Data Schema & Structure
 
-### Gold Schema Structure
+### Silver Layer Datasets (Root CSV Files)
+
+| File Name | Description |
+|-----------|-------------|
+| **customers.csv** | Raw/Cleaned customer details including IDs and location. |
+| **geoLocation.csv** | Geographic reference data by ZIP code, city, and state. |
+| **orders.csv** | Transactional order headers and status updates. |
+| **order_items.csv** | Itemized product details per order. |
+| **order_payments.csv** | Payment transaction breakdown and methods. |
+| **order_reviews.csv** | Customer feedback, review scores, and timestamps. |
+| **products.csv** | Specifications and attributes for all sold products. |
+| **product_category_name_translation.csv** | Category translations between languages. |
+| **sellers.csv** | Seller account and geographic details. |
+| **statesEnglishName.csv** | Reference mapping for state abbreviations to English names. |
+
+---
+
+### Gold Layer Schema (Located in `/Gold`)
 
 | Table Name | Type | Description |
 |-------------|------|-------------|
-| **DimCustomers** | Dimension | Contains customer details including ID, location, and unique identifiers. |
-| **DimSellers** | Dimension | Holds seller information such as ID, city, and state. |
-| **DimProducts** | Dimension | Includes product specifications such as category, weight, and size. |
-| **DimReviews** | Dimension | Stores customer review data, scores, and timestamps. |
-| **DimGeoLocation** | Dimension | Maps geographic data by ZIP code, city, and state. |
-| **DimStatesEnglishName** | Dimension | Reference table mapping state codes to English names. |
-| **FactOrders** | Fact | Central transactional table containing order, product, payment, and delivery details. |
-
+| **DimCustomers** | Dimension | Customer dimension built from Silver customer datasets. |
+| **DimSellers** | Dimension | Seller information formatted for analytics. |
+| **DimProducts** | Dimension | Enriched product details and specifications. |
+| **DimReviews** | Dimension | Customer review metrics and sentiment scores. |
+| **DimGeoLocation** | Dimension | Consolidated geographic mappings. |
+| **DimStatesEnglishName** | Dimension | Standardized reference mapping for state codes. |
+| **FactOrders** | Fact | Central transactional table consolidating orders, items, and payments. |
